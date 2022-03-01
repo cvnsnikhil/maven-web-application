@@ -20,6 +20,7 @@
 		Mithun Software Solutions, 
 		Martha Halli,
 		Bangalore,
+		karnataka,
 		+91-9980923226,
 		devopstrainingbr@gmail.com
 		<br>
