@@ -1,0 +1,78 @@
+pipeline{
+
+agent any
+
+tools{
+    maven"maven 3.6.3"
+    
+}    
+    
+triggers{
+    
+ pollSCM('* * * * *')
+ githubPush()
+
+    
+}
+
+options{
+    timestamps()
+  buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '5', numToKeepStr: '5'))
+}
+
+
+stages{
+   stage('code_fromGIT'){
+
+     steps{
+         git branch: 'qa', credentialsId: 'b06262ac-bd78-421a-b272-15bcb0265f3b', url: 'https://github.com/cvnsnikhil/maven-web-application.git'
+          }
+   }          
+  
+   stage('build'){
+
+      steps{
+        sh "mvn clean package"         
+}   
+
+}
+
+stage('deploy'){
+    steps{
+      sshagent(['14b0120c-6459-49d9-8312-c9bb4df065d1']) {
+          sh "scp -o stricthostkeychecking=no target/maven-web-application.war ec2-user@3.110.173.23:/opt/apache-tomcat-9.0.58/webapps/"
+    
+}
+}
+
+}
+
+    
+}
+
+
+post{
+    
+   
+failure{   
+    emailext body: '''Build over NIKHIL !!
+
+
+Regards,
+
+venkata nikhil.cheppalli.''', subject: 'Build over NIKHIL !!', to: 'cvns786@gmail.com'
+    
+}
+
+success{
+    emailext body: '''Build over NIKHIL !!
+
+
+Regards,
+
+venkata nikhil.cheppalli.''', subject: 'Build over NIKHIL !!', to: 'cvns786@gmail.com'
+    
+}    
+    
+}
+}
